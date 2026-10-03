@@ -6,7 +6,7 @@ import UploadDocument from "./components/UploadDocument";
 function App() {
   const [refresh, setRefresh] = useState(0);
   const handleRefresh = () => {
-    setRefresh((prev) => prev + 1);
+    setRefresh(prev => prev + 1);
   };
   return (
     <div>

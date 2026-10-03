@@ -7,6 +7,8 @@ interface DocumentComponentProps {
   onDeleteSuccess: () => void;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function DocumentComponent({
   id,
   fileName,
@@ -30,7 +32,7 @@ function DocumentComponent({
       setDeleteError(null);
 
       const response = await fetch(
-        `https://localhost:7190/api/documents/${id}`,
+        `${API_BASE_URL}/api/documents/${id}`,
         {
           method: "DELETE",
         },
@@ -55,11 +57,11 @@ function DocumentComponent({
   };
 
   const handleOpen = () => {
-    window.open(`https://localhost:7190/api/documents/${id}/file`, "_blank");
+    window.open(`${API_BASE_URL}/api/documents/${id}/file`, "_blank");
   };
 
   const handleDownload = () => {
-    window.location.href = `https://localhost:7190/api/documents/${id}/download`;
+    window.location.href = `${API_BASE_URL}/api/documents/${id}/download`;
   };
 
   return (

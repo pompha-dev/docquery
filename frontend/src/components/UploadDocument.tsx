@@ -4,6 +4,8 @@ interface UploadDocumentProps {
   onUploadSuccess: () => void;
 }
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function UploadDocument({ onUploadSuccess }: UploadDocumentProps) {
   const [file, setFile] = useState<File | null>(null);
   const [uploadStatus, setUploadStatus] = useState("");
@@ -19,7 +21,7 @@ function UploadDocument({ onUploadSuccess }: UploadDocumentProps) {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const response = await fetch("https://localhost:7190/api/documents", {
+      const response = await fetch(`${API_BASE_URL}/api/documents`, {
         method: "POST",
         body: formData,
       });

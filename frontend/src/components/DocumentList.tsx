@@ -9,13 +9,16 @@ type DocumentListProps = {
   handleRefresh: () => void;
 };
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 function DocumentList({ title, refresh, handleRefresh }: DocumentListProps) {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("https://localhost:7190/api/documents")
+    setLoading(true);
+    fetch(`${API_BASE_URL}/api/documents`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(
