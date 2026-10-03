@@ -94,7 +94,7 @@ namespace RagApp.Api.Controllers
 
             var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(originalFileName);
             var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-            
+
 
             try
             {
@@ -123,7 +123,7 @@ namespace RagApp.Api.Controllers
                 _context.Documents.Add(document);
                 await _context.SaveChangesAsync();
             }
-            catch(DbUpdateException)
+            catch (DbUpdateException)
             {
                 if (System.IO.File.Exists(filePath))
                 {
@@ -138,9 +138,14 @@ namespace RagApp.Api.Controllers
                 UploadedAt = document.UploadedAt
 
             };
-            return Ok(documentDtoResponse);
+            return CreatedAtAction(
+                       nameof(GetDocument),
+                       new { id = document.Id },
+                       documentDtoResponse
+                   );
 
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDocument(int id)
