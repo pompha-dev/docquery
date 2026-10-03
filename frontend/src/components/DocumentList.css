@@ -1,0 +1,32 @@
+.document-list {
+    margin-top: 20px;
+}
+
+.document-card {
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.document-name {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.document-date {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.document-button {
+    margin-right: 8px;
+}
+
+.document-error {
+    margin: 8px 0;
+    font-size: 14px;
+}

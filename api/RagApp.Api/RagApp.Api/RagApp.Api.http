@@ -1,0 +1,45 @@
+@RagApp.Api_HostAddress = https://localhost:7190
+
+GET {{RagApp.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+GET {{RagApp.Api_HostAddress}}/api/documents
+
+###
+
+
+GET {{RagApp.Api_HostAddress}}/api/documents/2
+
+###
+
+POST {{RagApp.Api_HostAddress}}/api/documents
+Content-Type: application/json
+{
+  "FileName": "research3.pdf"
+}
+
+###
+
+
+
+
+DELETE {{RagApp.Api_HostAddress}}/api/documents/37
+
+
+###
+
+PUT {{RagApp.Api_HostAddress}}/api/documents/2
+Content-Type: application/json
+
+{
+  "FileName": "company-policy1.pdf"
+}
+
+###
+
+@id=29
+GET {{RagApp.Api_HostAddress}}/api/documents/{{id}}/file
+
+###
