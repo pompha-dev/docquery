@@ -10,7 +10,7 @@ GET {{RagApp.Api_HostAddress}}/api/documents
 ###
 
 
-GET {{RagApp.Api_HostAddress}}/api/documents/2
+GET {{RagApp.Api_HostAddress}}/api/documents/46
 
 ###
 
@@ -41,5 +41,38 @@ Content-Type: application/json
 
 @id=29
 GET {{RagApp.Api_HostAddress}}/api/documents/{{id}}/file
+
+###
+
+POST {{RagApp.Api_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+   "email": "test1@example.com",
+  "password": "MyPassword123!"
+}
+
+###
+
+POST {{RagApp.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "MyPassword123!"
+}
+
+###
+
+### Test protected documents endpoint
+GET https://localhost:7190/api/documents
+
+###
+
+GET {{RagApp.Api_HostAddress}}/api/auth/me
+
+###
+
+GET {{RagApp.Api_HostAddress}}/api/auth/me
 
 ###

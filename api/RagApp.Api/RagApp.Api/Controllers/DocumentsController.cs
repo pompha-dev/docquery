@@ -1,15 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using RagApp.Api.Models;
-using RagApp.Api.Data;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.Json;
+using RagApp.Api.Data;
 using RagApp.Api.DTOs;
+using RagApp.Api.Models;
 using System.IO;
+using System.Security.Claims;
 
 namespace RagApp.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class DocumentsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -22,14 +25,21 @@ namespace RagApp.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetDocuments()
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
 
             var documents = await _context.Documents
+                .Where(d => d.UserId == userId)
                 .Select(d => new DocumentDto
                 {
                     Id = d.Id,
                     FileName = d.FileName,
                     UploadedAt = d.UploadedAt
-                }).ToListAsync();
+                })
+                .ToListAsync();
 
             return Ok(documents);
         }
@@ -111,11 +121,19 @@ namespace RagApp.Api.Controllers
                 }
                 return StatusCode(500, "The file could not be saved.");
             }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
             var document = new Document
             {
                 FileName = originalFileName,
                 FilePath = Path.Combine("uploads", uniqueFileName),
-                UploadedAt = DateTime.UtcNow
+                UploadedAt = DateTime.UtcNow,
+                UserId = userId
             };
 
             try
@@ -150,7 +168,15 @@ namespace RagApp.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDocument(int id)
         {
-            var document = await _context.Documents.FindAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var document = await _context.Documents
+                .FirstOrDefaultAsync(d => d.Id == id && d.UserId == userId);
             if (document == null)
             {
                 return NotFound();
@@ -195,7 +221,15 @@ namespace RagApp.Api.Controllers
         [HttpGet("{id}/file")]
         public async Task<IActionResult> GetDocumentFile(int id)
         {
-            var document = await _context.Documents.FindAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var document = await _context.Documents
+                .FirstOrDefaultAsync(d => d.Id == id && d.UserId == userId);
 
             if (document == null)
             {
@@ -234,7 +268,15 @@ namespace RagApp.Api.Controllers
         [HttpGet("{id}/download")]
         public async Task<IActionResult> DownloadDocument(int id)
         {
-            var document = await _context.Documents.FindAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var document = await _context.Documents
+                .FirstOrDefaultAsync(d => d.Id == id && d.UserId == userId);
 
             if (document == null)
             {

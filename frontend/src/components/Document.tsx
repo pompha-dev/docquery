@@ -31,12 +31,10 @@ function DocumentComponent({
       setDeleting(true);
       setDeleteError(null);
 
-      const response = await fetch(
-        `${API_BASE_URL}/api/documents/${id}`,
-        {
-          method: "DELETE",
-        },
-      );
+      const response = await fetch(`${API_BASE_URL}/api/documents/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
 
       if (!response.ok) {
         console.error("Failed to delete document.");
@@ -56,37 +54,75 @@ function DocumentComponent({
     }
   };
 
-  const handleOpen = () => {
-    window.open(`${API_BASE_URL}/api/documents/${id}/file`, "_blank");
+  const handleOpen = async () => {
+    const response = await fetch(`${API_BASE_URL}/api/documents/${id}/file`, {
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to open document.");
+    }
+
+    const blob = await response.blob();
+
+    const url = URL.createObjectURL(blob);
+
+    window.open(url, "_blank");
   };
 
-  const handleDownload = () => {
-    window.location.href = `${API_BASE_URL}/api/documents/${id}/download`;
+  const handleDownload = async () => {
+    const response = await fetch(
+      `${API_BASE_URL}/api/documents/${id}/download`,
+      {
+        credentials: "include",
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to download document.");
+    }
+
+    const blob = await response.blob();
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    link.click();
+
+    URL.revokeObjectURL(url);
   };
 
   return (
     <div className="document-card">
-      <p className="document-name">{fileName}</p>
+      <div className="document-info">
+        <p className="document-name">{fileName}</p>
 
-      <p className="document-date">
-        {new Date(uploadedAt + "Z").toLocaleString()}
-      </p>
+        <p className="document-date">
+          {new Date(uploadedAt + "Z").toLocaleString()}
+        </p>
+      </div>
 
       {deleteError && <p className="document-error">{deleteError}</p>}
 
-      <button className="document-button" onClick={handleOpen}>
-        Open
-      </button>
-      <button className="document-button" onClick={handleDownload}>
-        Download
-      </button>
-      <button
-        className="document-button"
-        disabled={deleting}
-        onClick={handleDelete}
-      >
-        {deleting ? "Deleting..." : "Delete"}
-      </button>
+      <div className="document-actions">
+        <button className="document-button" onClick={handleOpen}>
+          Open
+        </button>
+
+        <button className="document-button" onClick={handleDownload}>
+          Download
+        </button>
+
+        <button
+          className="document-button"
+          disabled={deleting}
+          onClick={handleDelete}
+        >
+          {deleting ? "Deleting..." : "Delete"}
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 
+
 interface UploadDocumentProps {
   onUploadSuccess: () => void;
 }
@@ -23,6 +24,7 @@ function UploadDocument({ onUploadSuccess }: UploadDocumentProps) {
     try {
       const response = await fetch(`${API_BASE_URL}/api/documents`, {
         method: "POST",
+        credentials: "include",
         body: formData,
       });
 
@@ -56,9 +58,8 @@ function UploadDocument({ onUploadSuccess }: UploadDocumentProps) {
   };
 
   return (
-    <div>
-      <h2>Upload Document</h2>
-      <input
+    <div className="upload-controls">
+        <input
         type="file"
         disabled={uploading}
         ref={fileInputRef}

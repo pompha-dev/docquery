@@ -18,7 +18,9 @@ function DocumentList({ title, refresh, handleRefresh }: DocumentListProps) {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`${API_BASE_URL}/api/documents`)
+    fetch(`${API_BASE_URL}/api/documents`, {
+      credentials: "include",
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error(
@@ -39,7 +41,11 @@ function DocumentList({ title, refresh, handleRefresh }: DocumentListProps) {
     <div className="document-list">
       <h2> {title}</h2>
       {loading && <p>Loading documents</p>}
-      {error && <p>{error}</p>}
+      {error && (
+        <p className="document-error" role="alert">
+          Unable to load your documents. Please try again.
+        </p>
+      )}
       {documents.map((document) => (
         <DocumentComponent
           key={document.id}
@@ -49,6 +55,12 @@ function DocumentList({ title, refresh, handleRefresh }: DocumentListProps) {
           onDeleteSuccess={handleRefresh}
         />
       ))}
+      {!loading && !error && documents.length === 0 && (
+        <p className="empty-documents">
+          You haven't uploaded any documents yet. Upload a document above to get
+          started.
+        </p>
+      )}
     </div>
   );
 }

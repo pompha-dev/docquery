@@ -1,24 +1,28 @@
-import { useState } from "react";
-import "./App.css";
-import DocumentList from "./components/DocumentList";
-import UploadDocument from "./components/UploadDocument";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import DocumentsPage from "./pages/DocumentsPage";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
-  const [refresh, setRefresh] = useState(0);
-  const handleRefresh = () => {
-    setRefresh(prev => prev + 1);
-  };
   return (
-    <div>
-      <h1>DocQuery</h1>
-      <p>Ask questions about your document. </p>
-      <UploadDocument onUploadSuccess={handleRefresh} />
-      <DocumentList
-        title="My Documents"
-        refresh={refresh}
-        handleRefresh={handleRefresh}
-      />
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/documents"
+            element={
+              <ProtectedRoute>
+                <DocumentsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/register" element={<RegisterPage />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 
