@@ -77,3 +77,7 @@ GET {{RagApp.Api_HostAddress}}/api/auth/me
 
 ###
 
+
+GET {{RagApp.Api_HostAddress}}/api/Documents/52/extract-text
+
+###

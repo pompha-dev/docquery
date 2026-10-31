@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Storage.Json;
 using RagApp.Api.Data;
 using RagApp.Api.DTOs;
 using RagApp.Api.Models;
+using RagApp.Api.Services;
 using System.IO;
 using System.Security.Claims;
 
@@ -16,11 +17,17 @@ namespace RagApp.Api.Controllers
     public class DocumentsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly DocumentTextExtractor _textExtractor;
+        private readonly DocumentProcessingService _documentProcessingService;
 
-        public DocumentsController(ApplicationDbContext context)
+
+        public DocumentsController(ApplicationDbContext context, DocumentTextExtractor textExtractor,
+            DocumentProcessingService documentProcessingService)
         {
             _context = context;
-        }
+            _textExtractor = textExtractor;
+            _documentProcessingService = documentProcessingService;
+         }
 
         [HttpGet]
         public async Task<IActionResult> GetDocuments()
@@ -149,6 +156,21 @@ namespace RagApp.Api.Controllers
                 }
                 throw;
             }
+            try
+            {
+                await _documentProcessingService.ProcessDocumentAsync(filePath, document.Id);
+            }
+            catch(Exception)
+            {
+                _context.Documents.Remove(document);
+                await _context.SaveChangesAsync();
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+                return StatusCode(500, "Document processing failed.");
+            }
+
             var documentDtoResponse = new DocumentDto
             {
                 Id = document.Id,
@@ -311,6 +333,7 @@ namespace RagApp.Api.Controllers
 
             return File(fileBytes, contentType, document.FileName);
         }
+
     }
 }
 

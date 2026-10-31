@@ -12,5 +12,6 @@ namespace RagApp.Api.Data
         }
 
         public DbSet<Document> Documents { get; set; }
+        public DbSet<DocumentChunk> DocumentChunks { get; set; }
     }
 }

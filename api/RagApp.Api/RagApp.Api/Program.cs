@@ -1,8 +1,21 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OpenAI;
 using RagApp.Api.Data;
+using RagApp.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+
+if (string.IsNullOrWhiteSpace(apiKey))
+{
+    throw new InvalidOperationException(
+        "The OPENAI_API_KEY environment variable is not set.");
+}
+
+builder.Services.AddSingleton(new OpenAIClient(apiKey));
+builder.Services.AddScoped<EmbeddingService>();
 
 // Add services to the container.
 builder.Services.AddCors(options =>
@@ -39,6 +52,11 @@ builder.Services.ConfigureApplicationCookie(options =>
         return Task.CompletedTask;
     };
 });
+
+builder.Services.AddScoped<DocumentTextExtractor>();
+builder.Services.AddScoped<TextChunker>();
+builder.Services.AddScoped<DocumentProcessingService>();
+builder.Services.AddScoped<CosineSimilarityService>();
 
 var app = builder.Build();
 
