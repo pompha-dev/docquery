@@ -57,6 +57,8 @@ builder.Services.AddScoped<DocumentTextExtractor>();
 builder.Services.AddScoped<TextChunker>();
 builder.Services.AddScoped<DocumentProcessingService>();
 builder.Services.AddScoped<CosineSimilarityService>();
+builder.Services.AddScoped<DocumentRetrievalService>();
+builder.Services.AddScoped<ChatService>();
 
 var app = builder.Build();
 

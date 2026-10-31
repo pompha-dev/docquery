@@ -81,3 +81,13 @@ GET {{RagApp.Api_HostAddress}}/api/auth/me
 GET {{RagApp.Api_HostAddress}}/api/Documents/52/extract-text
 
 ###
+
+POST {{RagApp.Api_HostAddress}}/Chat
+Content-Type: application/json
+
+{
+  "documentId": 61,
+  "question": "What is this document about?"
+}
+
+###
